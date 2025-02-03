@@ -40,6 +40,17 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(_amountController.text) ?? 0.0;
+    final amountIsInvalid = enteredAmount <= 0;
+
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        _selectedDate == null) {
+      // show error
+    }
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -114,8 +125,7 @@ class _NewExpenseState extends State<NewExpense> {
             const SizedBox(width: 20),
             ElevatedButton(
               onPressed: () {
-                print(_titleController.text);
-                print(_amountController.text);
+                _submitExpenseData;
                 Navigator.pop(context);
               },
               child: const Text('Save'),
