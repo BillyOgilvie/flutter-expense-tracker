@@ -12,7 +12,7 @@ class _NewExpenseState extends State<NewExpense> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   DateTime? _selectedDate;
-  final TextEditingController _categoryController = TextEditingController();
+  Category? _selectedCategory = Category.food;
 
   void _presentDatePicker() async {
     final now = DateTime.now();
@@ -31,11 +31,19 @@ class _NewExpenseState extends State<NewExpense> {
     }
   }
 
+  void setSelectedCategory(Category? category) {
+    if (category == null) {
+      return;
+    }
+    setState(() {
+      _selectedCategory = category;
+    });
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
     _amountController.dispose();
-    _categoryController.dispose();
     super.dispose();
   }
 
@@ -81,16 +89,29 @@ class _NewExpenseState extends State<NewExpense> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         Row(
           children: [
-            ElevatedButton(
+            DropdownButton(
+              value: _selectedCategory,
+              items: Category.values
+                  .map(
+                    (category) => DropdownMenuItem(
+                      value: category,
+                      child: Text(category.name.toUpperCase()),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) => setSelectedCategory(value as Category),
+            ),
+            const Spacer(),
+            TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
               child: const Text('Cancel'),
             ),
-            const Spacer(),
+            const SizedBox(width: 20),
             ElevatedButton(
               onPressed: () {
                 print(_titleController.text);
