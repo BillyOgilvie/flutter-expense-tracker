@@ -23,22 +23,11 @@ class _ExpensesState extends State<Expenses> {
       date: DateTime(2025, 1, 30),
       category: Category.travel,
     ),
-    Expense(
-      title: 'Dinner',
-      amount: 30.0,
-      date: DateTime(2025, 1, 28),
-      category: Category.leisure,
-    ),
-    Expense(
-      title: 'Laptop',
-      amount: 1000.0,
-      date: DateTime(2025, 1, 17),
-      category: Category.work,
-    ),
   ];
 
   _openAddExpenseOverlay() {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (BuildContext showModalBottomSheetContext) => NewExpense(
         onAddExpense: _addExpense,
@@ -49,6 +38,12 @@ class _ExpensesState extends State<Expenses> {
   void _addExpense(Expense expense) {
     setState(() {
       _registeredExpenses.add(expense);
+    });
+  }
+
+  void _removeExpense(Expense expense) {
+    setState(() {
+      _registeredExpenses.remove(expense);
     });
   }
 
@@ -68,7 +63,12 @@ class _ExpensesState extends State<Expenses> {
       body: Column(
         children: [
           const Text('The Chart'),
-          Expanded(child: ExpensesList(expenses: _registeredExpenses))
+          Expanded(
+            child: ExpensesList(
+              expenses: _registeredExpenses,
+              onRemoveExpense: _removeExpense,
+            ),
+          ),
         ],
       ),
     );
