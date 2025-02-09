@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker_app/models/expense.dart';
 
@@ -42,6 +45,39 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
+  void _showDialog() {
+    Platform.isIOS
+        ? showCupertinoDialog(
+            context: context,
+            builder: (ctx) => CupertinoAlertDialog(
+                  title: const Text('Invalid input'),
+                  content: const Text('Please enter valid data'),
+                  actions: [
+                    CupertinoDialogAction(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                      },
+                      child: const Text('Okay'),
+                    ),
+                  ],
+                ))
+        : showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Invalid input'),
+              content: const Text('Please enter valid data'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                  },
+                  child: const Text('Okay'),
+                ),
+              ],
+            ),
+          );
+  }
+
   void _submitExpenseData() {
     final enteredAmount = double.tryParse(_amountController.text) ?? 0.0;
     final amountIsInvalid = enteredAmount <= 0;
@@ -49,21 +85,8 @@ class _NewExpenseState extends State<NewExpense> {
     if (_titleController.text.trim().isEmpty ||
         amountIsInvalid ||
         _selectedDate == null) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Invalid input'),
-          content: const Text('Please enter valid data'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-              },
-              child: const Text('Okay'),
-            ),
-          ],
-        ),
-      );
+      _showDialog();
+
       return;
     }
 
